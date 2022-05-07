@@ -37,14 +37,14 @@ def level_7():
     if skip_counter >1:
         exit()
     else:  
-        print("Toll, du weisst jetzt schon einiges über deinen Vater und hast bestimmt schon gemerkt, dass es nicht der Mann deiner Mutter ist. Im letzten Level kannst du dir die Telefonnummer erarbeiten und ihn anschliessend anrufen.")
+        print("Toll, du weisst jetzt schon einiges über deinen Vater und hast bestimmt schon gemerkt, dass es nicht der Mann deiner Mutter ist.\nIm letzten Level kannst du dir die Telefonnummer erarbeiten und ihn anschliessend anrufen.")
         done = False
         false_counter = 0
         while not done:
-            antwort_7 = (input("Hoffentlich hast du meinen Tipp zu beginn des Spieles ernst genommen und dir die Hinweise gemerkt. Deine letzte Aufgabe ist es, die richtige Person auszuwählen. Gib dazu bloss 'a' , 'b' oder 'c' ein: a) Roland wohnt aktuell am Nil b) Roland ist klein und ein Weltenbummler c) Er spielt sowohl Fussball als auch Klavier.\n"))
+            antwort_7 = (input("Hoffentlich hast du meinen Tipp zu beginn des Spieles ernst genommen und dir die Hinweise gemerkt.\nDeine letzte Aufgabe ist es, die richtige Person auszuwählen.\nGib dazu bloss 'a' , 'b' oder 'c' ein:\na) Roland wohnt aktuell am Nil\nb) Roland ist klein und ein Weltenbummler\nc) Er spielt sowohl Fussball als auch Klavier.\n"))
             if antwort_7 == "b":
                 print("Richtig, dies ist tatsächlich dein Vater.")
-                print("Gratuliere! Hier die Handynummer: xxx xxx xx xx\n Danke fürs Mitspielen!")
+                print("Gratuliere! Hier die Handynummer: xxx xxx xx xx\nDanke fürs Mitspielen!")
                 done = True
                 exit()
             else :
@@ -56,7 +56,6 @@ def level_7():
                 else:
                     print("Falsch, versuch nocheinmal")
 
-level_7()
 
 
 
