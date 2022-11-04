@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher View</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.41/vue.global.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.1.3/axios.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        Teacher View
+        <div v-if="page =='start'">
+            Angemeldet sind {{joins.length}} Personen.
+            <ul>
+                <li v-for="username in joins">{{username}}</li>
+            </ul>
+            <button @click="start">Start Game!</button>
+        </div>
+        <div v-else-if="page =='question'">
+            Frage: Wie viele Ruebli werden in der Schweiz pro Jahr gegessen?
+            <ol>
+                <li>50</li>
+                <li>100</li>
+                <li>1000</li>
+                <li>2000</li>
+            </ol>
+            <button @click="correct_answer">Auflösen!</button><br>
+            Es wurden schon {{answers.length}} gegeben
+        </div>
+
+        <div v-else-if="page =='correct_answer'">
+            Die richtige Antwort lautet: 2. 100 <br>
+            <button @click="start2">Nächste Frage!</button> 
+        </div>
+        
+        <div v-else-if="page =='question2'">
+            Frage: Wie viele Kartoffeln werden in der Schweiz pro Jahr gegessen?
+            <ol>
+                <li>50</li>
+                <li>100</li>
+                <li>2000</li>
+                <li>5000</li>
+            </ol>
+            <button @click="correct_answer2">Auflösen!</button><br>
+            Es wurden schon {{answers2.length}} gegeben
+        </div>
+        <div v-else-if="page =='correct_answer2'">
+            Die richtige Antwort lautet: 1. 50 <br>
+            <button @click="leaderboard">Rangliste</button>
+        </div>
+
+        <div v-else-if="page =='leaderboard'">
+            <h3>Rangliste</h3>
+            Am besten war {{best_player}}. <br>
+            Am dümmsten war {{worst_player}}.
+        </div>
+
+
+    </div>
+
+    <script>
+        var ref = Vue.ref
+        var computed = Vue.computed
+
+        function setup() {
+            var page = ref("start")
+            var joins = ref([])
+            var answers = ref([])
+            var answers2 = ref([])
+
+            var best_player = computed(function (){
+                for (var answer of answers.value) {
+                    if (answer.answer == 2) { //und die 1 Antwort dann
+                        return answer.player_name 
+                        }
+                    }
+                    
+                }
+            )
+
+            var worst_player = computed(function (){
+                for (var answer of answers.value) {
+                    if (answer.answer == 4) {//und die 4 antwort dann 
+                        return answer.player_name
+                    }
+                    
+                }
+            })
+            
+
+
+            var source = new EventSource('/api/messages')
+            source.addEventListener("new_player", function(message){
+                joins.value.push(JSON.parse(message.data))
+            })
+            source.addEventListener("answer", function(message){
+                answers.value.push(JSON.parse(message.data))
+            })
+            source.addEventListener("answer2", function(message){
+                answers2.value.push(JSON.parse(message.data))
+            })
+
+            function start() {
+                page.value = "question"
+                //An den Server schicken, dass es los geht
+                axios.post("/api/start_question")
+
+            }
+
+            function start2() {
+                page.value = "question2"
+                //An den Server schicken, dass es los geht
+                axios.post("/api/start_question")
+
+            }
+
+            function correct_answer() {
+                page.value = "correct_answer"
+            }
+
+            function correct_answer2() {
+                page.value = "correct_answer2"
+            }
+
+            function leaderboard() {
+                page.value = "leaderboard"
+            }
+
+            function question2() {
+                page.value = "question2"
+            }
+
+            return{
+                "page":page,
+                "joins":joins,
+                "start":start,
+                "correct_answer":correct_answer,
+                "answers":answers,
+                "leaderboard":leaderboard,
+                "best_player": best_player,
+                "worst_player": worst_player,
+                "correct_answer2":correct_answer2,
+                "question2":question2,
+                "start2": start2,
+                "answers2": answers2,
+                
+                
+                
+            
+            }
+        }
+            
+        
+      
+        var app = Vue.createApp({"setup": setup})
+        app.mount("#app")
+    </script>
+    
+</body>
+</html

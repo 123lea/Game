@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student View</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.41/vue.global.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.1.3/axios.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div v-if="page =='start'">
+            <input type="text" placeholder="username" v-model="username">
+            <button @click="join">Go!</button>
+        </div>
+        <div v-else-if="page =='wait'">
+            Bitte warten ...
+        </div>
+        <div v-else-if="page =='answer'">
+            Antwort eingeben :
+            <button @click="thanks(1)">1</button>
+            <button @click="thanks(2)">2</button>
+            <button @click="thanks(3)">3</button>
+            <button @click="thanks(4)">4</button>
+        </div>
+        <div v-else-if="page =='thanks'">
+            Dankeschön, warten auf nächste Frage.
+        </div>
+        <div v-else-if="page =='answer2'">
+            Antwort eingeben :
+            <button @click="thanks2(1)">1</button>
+            <button @click="thanks2(2)">2</button>
+            <button @click="thanks2(3)">3</button>
+            <button @click="thanks2(4)">4</button>
+        </div>
+        <div v-else-if="page =='thanks2'">
+            Dankeschön es ist fertig.
+        </div>
+    </div>
+
+    <script>
+        var ref = Vue.ref
+
+        function setup() {
+            var username = ref("")
+            var page = ref("start")
+
+            function join(){
+                
+                //username an server senden
+                axios.post("api/join",{"player_name":username.value})
+                page.value = "wait"
+            }
+
+            var source = new EventSource('/api/messages')
+            source.addEventListener("start_question", function(message){
+                if (page.value === "wait") {
+                    page.value = "answer"
+                    }
+                    
+                else if (page.value === "thanks") {
+                    page.value = "answer2"
+                }
+
+        
+            })
+        
+
+            function thanks(answer_number) {
+                axios.post("api/answer",{"player_name":username.value,"answer":answer_number})
+                page.value ="thanks"
+
+            }
+
+            function answer2(){
+                if (page.value === "thanks") {
+                    page.value = "answer2"
+            }}
+
+            function thanks2(answer2_number) {
+                axios.post("api/answer2",{"player_name":username.value,"answer2":answer2_number})
+                if (page.value === "answer2") {
+                    page.value = "thanks2"
+                }
+            }
+
+        
+            
+
+
+            return {
+                "page": page,
+                "username": username,
+                "join": join,
+                "thanks":thanks,
+                "answer2": answer2,
+                "thanks2": thanks2,
+
+                
+            }
+        }
+      
+        var app = Vue.createApp({"setup": setup})
+        app.mount("#app")
+    </script>
+    
+</body>
+</html>
